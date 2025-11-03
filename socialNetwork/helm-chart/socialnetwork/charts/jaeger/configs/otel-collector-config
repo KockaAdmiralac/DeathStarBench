@@ -1,0 +1,113 @@
+
+receivers:
+  jaeger:
+    protocols:
+      thrift_compact:
+        endpoint: "0.0.0.0:6831"
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+connectors:
+  spanmetrics:
+    histogram:
+      explicit:
+        buckets:
+          - 0.1ms
+          - 0.2ms
+          - 0.3ms
+          - 0.4ms
+          - 0.5ms
+          - 0.6ms
+          - 0.7ms
+          - 0.8ms
+          - 0.9ms
+          - 1.0ms
+          - 1.1ms
+          - 1.2ms
+          - 1.3ms
+          - 1.4ms
+          - 1.5ms
+          - 1.6ms
+          - 1.7ms
+          - 1.8ms
+          - 1.9ms
+          - 2.0ms
+          - 2.1ms
+          - 2.2ms
+          - 2.3ms
+          - 2.4ms
+          - 2.5ms
+          - 2.6ms
+          - 2.7ms
+          - 2.8ms
+          - 2.9ms
+          - 3.0ms
+          - 3.1ms
+          - 3.2ms
+          - 3.3ms
+          - 3.4ms
+          - 3.5ms
+          - 3.6ms
+          - 3.7ms
+          - 3.8ms
+          - 3.9ms
+          - 4.0ms
+          - 4.1ms
+          - 4.2ms
+          - 4.3ms
+          - 4.4ms
+          - 4.5ms
+          - 4.6ms
+          - 4.7ms
+          - 4.8ms
+          - 4.9ms
+          - 5.0ms
+          - 5.1ms
+          - 5.2ms
+          - 5.3ms
+          - 5.4ms
+          - 5.5ms
+          - 5.6ms
+          - 5.7ms
+          - 5.8ms
+          - 5.9ms
+          - 6.0ms
+          - 6.5ms
+          - 7.0ms
+          - 7.5ms
+          - 8.0ms
+          - 8.5ms
+          - 9.0ms
+          - 9.5ms
+          - 10.0ms
+          - 11.0ms
+          - 12.0ms
+          - 13.0ms
+          - 14.0ms
+          - 15.0ms
+          - 16.0ms
+          - 17.0ms
+          - 18.0ms
+          - 19.0ms
+          - 20.0ms
+          - 25.0ms
+          - 30.0ms
+          - 35.0ms
+          - 40.0ms
+          - 45.0ms
+          - 50.0ms
+          - 100.0ms
+          - 200.0ms
+          - 500.0ms
+          - 1000.0ms
+processors:
+  batch:
+service:
+  pipelines:
+    traces:
+      receivers: [jaeger]
+      processors: [batch]
+      exporters: [spanmetrics]
+    metrics/spanmetrics:
+      receivers: [spanmetrics]
+      exporters: [prometheus]

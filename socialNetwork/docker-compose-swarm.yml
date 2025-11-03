@@ -2,32 +2,22 @@ version: "3.8"
 
 services:
   jaeger-agent:
-    image: jaegertracing/jaeger-agent:latest
-    hostname: jaeger-agent
-    command: ["--reporter.grpc.host-port=jaeger-collector:14250"]
-    # ports:
-    #   - target: 6831
-    #     published: 6831
-    #     protocol: udp
-    #     mode: host
-    #   - target: 5778
-    #     published: 5778
-    #     protocol: tcp
-    #     mode: host
-    #   - target: 14271
-    #     published: 14271
-    #     protocol: tcp
-    #     mode: host
+    image: otel/opentelemetry-collector-contrib:0.109.0
+    volumes:
+      - ./config/otel-collector-config-connector.yml:/etc/otelcol/otel-collector-config.yml
+    command: --config /etc/otelcol/otel-collector-config.yml
+    ports:
+      - "8889:8889"
     deploy:
+      placement:
+        constraints:
+          - node.hostname==node-007.lsimic-deathstar.faas-sched.emulab.net
       restart_policy:
         condition: any
-    depends_on:
-      - jaeger-collector
 
   compose-post-service:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -42,7 +32,6 @@ services:
   home-timeline-redis:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: home-timeline-redis
     image: redis
     command: "redis-server /social-network-microservices/config/redis.conf"
@@ -53,7 +42,6 @@ services:
   home-timeline-service:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -68,7 +56,6 @@ services:
   media-frontend:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -84,7 +71,6 @@ services:
   media-memcached:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: media-memcached
     image: memcached
     command:
@@ -96,7 +82,6 @@ services:
   media-mongodb:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: media-mongodb
     image: mongo:4.4.6
     command: "mongod --nojournal --quiet --config /social-network-microservices/config/mongod.conf"
@@ -109,7 +94,6 @@ services:
     depends_on:
       - media-mongodb
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -124,7 +108,6 @@ services:
   nginx-web-server:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -145,7 +128,6 @@ services:
   post-storage-memcached:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: post-storage-memcached
     image: memcached
     command:
@@ -157,7 +139,6 @@ services:
   post-storage-mongodb:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: post-storage-mongodb
     image: mongo:4.4.6
     command: "mongod --nojournal --quiet --config /social-network-microservices/config/mongod.conf"
@@ -170,7 +151,6 @@ services:
     depends_on:
       - post-storage-mongodb
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -185,7 +165,6 @@ services:
   social-graph-mongodb:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: social-graph-mongodb
     image: mongo:4.4.6
     command: "mongod --nojournal --quiet --config /social-network-microservices/config/mongod.conf"
@@ -197,7 +176,6 @@ services:
   social-graph-redis:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: social-graph-redis
     image: redis
     command: "redis-server /social-network-microservices/config/redis.conf"
@@ -208,7 +186,6 @@ services:
   social-graph-service:
     depends_on:
       - jaeger-agent
-      - jaeger-query
       - social-graph-mongodb
     deploy:
       replicas: 1
@@ -224,7 +201,6 @@ services:
   text-service:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -239,7 +215,6 @@ services:
   unique-id-service:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -254,7 +229,6 @@ services:
   url-shorten-memcached:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: url-shorten-memcached
     image: memcached
     command:
@@ -266,7 +240,6 @@ services:
   url-shorten-mongodb:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: url-shorten-mongodb
     image: mongo:4.4.6
     command: "mongod --nojournal --quiet --config /social-network-microservices/config/mongod.conf"
@@ -279,7 +252,6 @@ services:
     depends_on:
       - url-shorten-mongodb
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -294,7 +266,6 @@ services:
   user-memcached:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: user-memcached
     image: memcached
     command:
@@ -306,7 +277,6 @@ services:
   user-mention-service:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -321,7 +291,6 @@ services:
   user-mongodb:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: user-mongodb
     image: mongo:4.4.6
     command: "mongod --nojournal --quiet --config /social-network-microservices/config/mongod.conf"
@@ -334,7 +303,6 @@ services:
     depends_on:
       - user-mongodb
       - jaeger-agent
-      - jaeger-query
     deploy:
       replicas: 1
       restart_policy:
@@ -349,7 +317,6 @@ services:
   user-timeline-mongodb:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: user-timeline-mongodb
     image: mongo:4.4.6
     command: "mongod --nojournal --quiet --config /social-network-microservices/config/mongod.conf"
@@ -361,7 +328,6 @@ services:
   user-timeline-redis:
     depends_on:
       - jaeger-agent
-      - jaeger-query
     hostname: user-timeline-redis
     image: redis
     command: "redis-server /social-network-microservices/config/redis.conf"
@@ -382,48 +348,6 @@ services:
     image: deathstarbench/social-network-microservices:latest
     volumes:
       - ./config:/social-network-microservices/config
-
-  jaeger-collector:
-    image: jaegertracing/jaeger-collector
-    command:
-      [
-        "--cassandra.keyspace=jaeger_v1_dc1",
-        "--cassandra.servers=cassandra",
-        "--collector.zipkin.host-port=9411",
-        "--collector.num-workers=100",
-        "--collector.queue-size=100000"
-      ]
-    ports:
-      - "14269:14269"
-    deploy:
-      restart_policy:
-        condition: any
-    depends_on:
-      - cassandra-schema
-
-  jaeger-query:
-    image: jaegertracing/jaeger-query
-    command:
-      ["--cassandra.keyspace=jaeger_v1_dc1", "--cassandra.servers=cassandra"]
-    ports:
-      - "16686:16686"
-    deploy:
-      restart_policy:
-        condition: any
-    depends_on:
-      - cassandra-schema
-
-  cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema
-    deploy:
-      restart_policy:
-        condition: on-failure
-    depends_on:
-      - cassandra
-
-  cassandra:
-    image: cassandra:3.9
-    deploy:
 
 networks:
   default:
