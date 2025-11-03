@@ -1,0 +1,4 @@
+FROM kockaadmiralac/socialnetwork-deps
+
+RUN systemctl enable home-timeline-service
+ENTRYPOINT ["HomeTimelineService"]

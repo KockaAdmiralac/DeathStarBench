@@ -1,0 +1,13 @@
+[Unit]
+Description=MediaService
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/MediaService
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/ttyS0
+WorkingDirectory=/social-network-microservices
+
+[Install]
+WantedBy=multi-user.target

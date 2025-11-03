@@ -1,0 +1,4 @@
+FROM kockaadmiralac/socialnetwork-deps
+
+RUN systemctl enable compose-post-service
+ENTRYPOINT ["ComposePostService"]

@@ -1,0 +1,22 @@
+FROM yg397/media-frontend:xenial
+
+RUN apt-get update
+RUN apt-get install -y openssh-server htop dnsutils traceroute iputils-ping
+RUN sed -i 's/PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN echo 'root:dirigent' | chpasswd
+RUN systemctl enable ssh
+
+RUN rm /lib/systemd/system/default.target
+RUN systemctl disable getty@tty1.service
+RUN systemctl mask serial-getty@ttyS0.service
+RUN ln -s /lib/systemd/system/multi-user.target /lib/systemd/system/default.target
+COPY services/media-frontend.service /etc/systemd/system/
+RUN systemctl enable media-frontend
+
+COPY media-frontend/lua-scripts /usr/local/openresty/nginx/lua-scripts
+COPY media-frontend/conf/nginx-dirigent.conf /usr/local/openresty/nginx/conf/nginx.conf
+# If running without DNS:
+# RUN find /usr/local/openresty/nginx/lua-scripts -exec sed -i 's/jaeger-agent/11.0.0.2/g;s/social-graph-redis/11.0.0.3/g;s/home-timeline-redis/11.0.0.4/g;s/user-timeline-redis/11.0.0.5/g;s/social-graph-mongodb/11.0.0.6/g;s/post-storage-mongodb/11.0.0.7/g;s/user-timeline-mongodb/11.0.0.8/g;s/url-shorten-mongodb/11.0.0.9/g;s/user-mongodb/11.0.0.10/g;s/media-mongodb/11.0.0.11/g;s/post-storage-memcached/11.0.0.12/g;s/url-shorten-memcached/11.0.0.13/g;s/user-memcached/11.0.0.14/g;s/media-memcached/11.0.0.15/g;s/social-graph-service/11.0.0.16/g;s/compose-post-service/11.0.0.17/g;s/post-storage-service/11.0.0.18/g;s/user-timeline-service/11.0.0.19/g;s/url-shorten-service/11.0.0.20/g;s/user-service/11.0.0.21/g;s/media-service/11.0.0.22/g;s/text-service/11.0.0.23/g;s/unique-id-service/11.0.0.24/g;s/user-mention-service/11.0.0.25/g;s/home-timeline-service/11.0.0.26/g;s/nginx-thrift/11.0.0.27/g;s/media-frontend/11.0.0.28/g' {} \;
+
+RUN rm /usr/local/openresty/nginx/logs/access.log
+RUN rm /usr/local/openresty/nginx/logs/error.log

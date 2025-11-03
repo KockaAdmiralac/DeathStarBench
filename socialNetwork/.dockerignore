@@ -1,9 +1,15 @@
 *
 !/src/
 !/CMakeLists.txt
+!/config/
 !/cmake/
 !/datasets/
+!/docker/
 !/gen-cpp/
+!/gen-lua/
+!/media-frontend/
+!/nginx-web-server/
+!/services/
 !/scripts/
 !/third_party/
 !/wrk2/

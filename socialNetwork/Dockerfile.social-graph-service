@@ -1,0 +1,4 @@
+FROM kockaadmiralac/socialnetwork-deps
+
+RUN systemctl enable social-graph-service
+ENTRYPOINT ["/bin/sh", "-c", "cat /etc/resolv.conf && SocialGraphService"]

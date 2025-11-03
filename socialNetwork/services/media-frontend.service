@@ -1,0 +1,10 @@
+[Unit]
+Description=media-frontend
+After=network.target
+
+[Service]
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin"
+ExecStart=/usr/local/openresty/bin/openresty -g 'daemon off;'
+
+[Install]
+WantedBy=multi-user.target

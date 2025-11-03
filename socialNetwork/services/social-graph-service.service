@@ -1,0 +1,13 @@
+[Unit]
+Description=SocialGraphService
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/SocialGraphService
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/ttyS0
+WorkingDirectory=/social-network-microservices
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+FROM alpine
+
+RUN apk update
+RUN apk add --no-cache iperf3 openrc
+COPY services/iperf3.service.sh /etc/init.d/iperf3
+RUN chmod 0755 /etc/init.d/iperf3
+RUN rc-update add devfs boot
+RUN rc-update add procfs boot
+RUN rc-update add sysfs boot
+RUN rc-update add iperf3 boot
+RUN rm -rf /var/cache/apk/*
+ENTRYPOINT ["iperf3", "-s"]

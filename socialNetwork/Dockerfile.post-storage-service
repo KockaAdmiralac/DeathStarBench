@@ -1,0 +1,4 @@
+FROM kockaadmiralac/socialnetwork-deps
+
+RUN systemctl enable post-storage-service
+ENTRYPOINT ["PostStorageService"]

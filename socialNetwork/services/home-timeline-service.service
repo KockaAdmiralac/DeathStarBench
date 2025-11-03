@@ -1,0 +1,13 @@
+[Unit]
+Description=HomeTimelineService
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/HomeTimelineService
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/ttyS0
+WorkingDirectory=/social-network-microservices
+
+[Install]
+WantedBy=multi-user.target

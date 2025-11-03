@@ -1,0 +1,13 @@
+[Unit]
+Description=UserService
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/UserService
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/ttyS0
+WorkingDirectory=/social-network-microservices
+
+[Install]
+WantedBy=multi-user.target
